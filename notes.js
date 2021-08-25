@@ -1,15 +1,13 @@
 const fs = require("fs");
-const getNotes = function () {
-  console.log(loadNotes());
-};
+const chalk = require('chalk')
 
-const addNotes = function (title, body) {
+const getNotes = () => console.log(loadNotes());
+
+const addNotes = (title, body) => {
   const notes = loadNotes();
   console.log(notes);
-  const duplicateNotes = notes.filter((note) => {
-    return note.title === title;
-  });
-  if (duplicateNotes.length !== 0) {
+  const duplicateNote = notes.find((note) => note.title === title)
+  if (!duplicateNote) {
     console.log("title already taken");
   } else {
     notes.push({ title: title, body: body });
@@ -17,7 +15,15 @@ const addNotes = function (title, body) {
   }
 };
 
-const removeNotes = function (title) {
+const listNotes = () => {
+  const notes = loadNotes();
+  console.log(chalk.blue("Your Notes!"))
+  for (note of notes) {
+    console.log(note.title, note.body);
+  }
+}
+
+const removeNotes = (title) => {
   let removed = false;
   const notes = loadNotes();
   for (let i = 0; i < notes.length; i++) {
@@ -34,12 +40,12 @@ const removeNotes = function (title) {
   }
 };
 
-const saveNotes = function (notes) {
+const saveNotes = (notes) => {
   const newJSON = JSON.stringify(notes);
   const writeFile = fs.writeFileSync("notes.json", newJSON);
 };
 
-const loadNotes = function () {
+const loadNotes = () => {
   try {
     const dataBuffer = fs.readFileSync("notes.json");
     const dataString = dataBuffer.toString();
@@ -53,5 +59,6 @@ const loadNotes = function () {
 module.exports = {
   getNotes: getNotes,
   addNotes: addNotes,
-  removeNotes: removeNotes
+  removeNotes: removeNotes,
+  listNotes: listNotes
 };
